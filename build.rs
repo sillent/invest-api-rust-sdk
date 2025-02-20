@@ -1,0 +1,19 @@
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    tonic_build::configure()
+        .build_client(true)
+        .build_server(false)
+        .compile_protos(
+            &[
+                "proto/investment-api/common.proto",
+                "proto/investment-api/orders.proto",
+                "proto/investment-api/instruments.proto",
+                "proto/investment-api/stoporders.proto",
+                "proto/investment-api/sandbox.proto",
+                "proto/investment-api/users.proto",
+                "proto/investment-api/marketdata.proto",
+                "proto/investment-api/operations.proto",
+            ],
+            &["proto/investment-api/"],
+        )?;
+    Ok(())
+}
