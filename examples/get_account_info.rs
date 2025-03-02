@@ -1,7 +1,5 @@
 use std::{env, time::Duration};
 
-use invest_api_rust_sdk;
-
 #[tokio::main]
 async fn main() {
 	let token_string = env::var("TOKEN").expect("TOKEN environment");

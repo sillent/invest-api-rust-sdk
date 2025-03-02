@@ -30,7 +30,7 @@ pub struct ServiceConfig {
 }
 
 impl ServiceConfig {
-    fn new<S>(base_url: S, auth_token: S) -> Self where S: Into<String>{
+    pub fn new<S>(base_url: S, auth_token: S) -> Self where S: Into<String>{
         Self {
             base_url: base_url.into(),
             auth_token: auth_token.into(),            
@@ -38,10 +38,10 @@ impl ServiceConfig {
             headers: vec![],
         }
     }
-    fn user_agent<S>(&mut self, user_agent: S) where S: Into<String> {
+    pub fn user_agent<S>(&mut self, user_agent: S) where S: Into<String> {
         self.user_agent= Some(user_agent.into());
     }
-    fn headers(&mut self, headers: Vec<(&'static str, String)>) {
+    pub fn headers(&mut self, headers: Vec<(&'static str, String)>) {
         headers.into_iter().map(|x| self.headers.push((x.0, x.1))).count();
     }
 }
@@ -99,85 +99,82 @@ impl GrpcClientFactory<NotReady> {
 impl GrpcClientFactory<Ready> {
     pub fn users_service(&self) -> UsersServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         UsersServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        UsersServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn orders_service(&self) -> OrdersServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         OrdersServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        OrdersServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn orders_stream_service(&self) -> OrdersStreamServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         OrdersStreamServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        OrdersStreamServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn stop_orders_service(&self) -> StopOrdersServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         StopOrdersServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        StopOrdersServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn operations_service(&self) -> OperationsServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         OperationsServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        OperationsServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn operations_stream_service(&self) -> OperationsStreamServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         OperationsStreamServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        OperationsStreamServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
-
     pub fn instruments_service(&self) -> InstrumentsServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         InstrumentsServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        InstrumentsServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn marketdata_service(&self) -> MarketDataServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         MarketDataServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        MarketDataServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn marketdata_stream_service(&self) -> MarketDataStreamServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         MarketDataStreamServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        MarketDataStreamServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
     pub fn sandbox_service(&self) -> SandboxServiceClient<InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>>> {
         let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse().expect("parsing correct");
-        let channel = self.channel.clone();
-         SandboxServiceClient::with_interceptor(channel.unwrap(), move |mut req: Request<()>| {
+        let channel = self.channel.clone().unwrap();
+        SandboxServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             req.metadata_mut().insert("authorization", token.clone());
             Ok(req)
         })
     }
-
-
 }
