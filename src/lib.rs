@@ -1,12 +1,12 @@
-pub mod prelude;
-pub use prelude::investment_api;
+pub(crate) mod prelude;
+pub use prelude::contracts;
 use std::time::Duration;
 use tonic::metadata::{MetadataMap, MetadataValue};
 use tonic::service::interceptor::InterceptedService;
 use tonic::transport::{Channel, ClientTlsConfig};
 use tonic::Request;
 
-use investment_api::users_service_client::UsersServiceClient;
+use contracts::users_service_client::UsersServiceClient;
 
 
 pub const PROD_ENDPOINT: &'static str = "https://invest-public-api.tinkoff.ru:443";
@@ -50,7 +50,6 @@ impl GrpcClientFactory<NotReady> {
         timeout: Duration,
         rate_limit: (u64, Duration),
     ) -> Result<GrpcClientFactory<Ready>, Box<dyn std::error::Error>> {
-        // let token: MetadataValue<_>= format!("Bearer {}", self.auth_token).parse()?;
         let channel = Channel::from_shared(self.base_url.clone())?
             .tls_config(self.tls_config.clone())?
             .rate_limit(rate_limit.0, rate_limit.1)
