@@ -33,8 +33,11 @@ pub struct GrpcClientFactory<State = NotReady> {
 }
 
 impl GrpcClientFactory<NotReady> {
-    pub fn new(base_url: String, auth_token: String) -> GrpcClientFactory<NotReady> {
+    pub fn new<S>(base_url: S, auth_token: S) -> GrpcClientFactory<NotReady>
+    where S: Into<String> {
         let tls_config = ClientTlsConfig::new().with_native_roots();
+        let base_url = base_url.into();
+        let auth_token = auth_token.into();
         Self {
             base_url,
             auth_token,
