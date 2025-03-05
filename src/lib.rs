@@ -1,4 +1,5 @@
 pub(crate) mod prelude;
+pub mod other;
 pub use prelude::contracts;
 use prelude::contracts::instruments_service_client::InstrumentsServiceClient;
 use prelude::contracts::market_data_service_client::MarketDataServiceClient;
@@ -48,10 +49,10 @@ impl ServiceConfig {
 }
 
 pub struct ServiceClientFactory {
-    base_url: String,
+    _base_url: String,
     // tls_config: ClientTlsConfig,
     endpoint: Endpoint,
-    user_agent: String,
+    // user_agent: String,
     metadata: MetadataMap,
 }
 
@@ -76,11 +77,12 @@ impl TryFrom<ServiceConfig> for ServiceClientFactory{
         metadata.insert("authorization", token);
         let tls_config = ClientTlsConfig::new().with_native_roots();
         let endpoint = Channel::from_shared(base_url.clone())?
-            .tls_config(tls_config)?;
+            .tls_config(tls_config)?
+            .user_agent(user_agent)?;
         Ok(ServiceClientFactory {
-            base_url,
+            _base_url: base_url,
             // tls_config,
-            user_agent,
+            // user_agent,
             endpoint,
             metadata,
         })
@@ -106,6 +108,10 @@ impl ServiceClientFactory {
     pub fn new<S>(base_url: S, auth_token: S) -> ServiceClientFactory where S: Into<String>{
         Self::try_from(ServiceConfig::new(base_url, auth_token)).unwrap()
     }
+    // pub fn new_sandbox<S>(auth_token: S) -> ServiceClientFactory where S: Into<String> {
+    //     Self::try_from(ServiceConfig::new(SANDBOX_ENDPOINT, auth_token)).unwrap()
+    // }
+
 
     // pub async fn connect(
     //     self,
@@ -138,7 +144,8 @@ impl ServiceClientFactory {
         if let Some(rate_limit) = rate_limit {
             endpoint = endpoint.rate_limit(rate_limit.0, rate_limit.1)
         }
-        let channel = endpoint.user_agent(&self.user_agent)?.connect().await?;
+        // let channel = endpoint.user_agent(&self.user_agent)?.connect().await?;
+        let channel = endpoint.connect().await?;
         let metadata = self.metadata.clone();
         Ok(UsersServiceClient::with_interceptor(channel, move |mut req: Request<()>| {
             metadata.iter().map(|x| {
@@ -146,7 +153,9 @@ impl ServiceClientFactory {
                     tonic::metadata::KeyAndValueRef::Ascii(k, v) => {
                         req.metadata_mut().insert(k, v.clone());
                     },
-                    tonic::metadata::KeyAndValueRef::Binary(k, v) => {},
+                    tonic::metadata::KeyAndValueRef::Binary(k, v) => {
+                        req.metadata_mut().insert_bin(k, v.clone());
+                    },
                 }
             }).count();
 
