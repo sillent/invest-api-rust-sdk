@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+paste = "1.0.15"
 prost = "0.13.5"
 prost-types = "0.13.5"
 tonic = { version = "0.12.3", features = ["gzip", "tls", "tls-native-roots"] }

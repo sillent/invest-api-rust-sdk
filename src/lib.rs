@@ -1,3 +1,4 @@
+use paste::paste;
 pub(crate) mod prelude;
 use contracts::instruments_service_client::InstrumentsServiceClient;
 use contracts::market_data_service_client::MarketDataServiceClient;
@@ -121,13 +122,14 @@ impl ServiceFactoryBuilder {
         if let Some(timeout) = timeout {
             endpoint = endpoint.timeout(timeout);
         }
-        Ok(ServiceFactory { endpoint, metadata })
+        let channel = endpoint.connect_lazy();
+        Ok(ServiceFactory { channel, metadata })
     }
 }
 
 pub struct ServiceFactory {
-    endpoint: Endpoint,
     metadata: MetadataMap,
+    channel: Channel,
 }
 
 impl ServiceFactory {
@@ -158,8 +160,7 @@ macro_rules! service_gen {
                 impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>,
             >,
         > {
-            let endpoint = self.endpoint.clone();
-            let channel = endpoint.connect_lazy();
+            let channel = self.channel.clone();
             let metadata = self.metadata.clone();
             $service::with_interceptor(channel, move |mut req: Request<()>| {
                 metadata
@@ -175,6 +176,32 @@ macro_rules! service_gen {
                     .count();
                 Ok(req)
             })
+        }
+
+        paste! {
+            pub fn [<$name _with_interceptor>](&self, mut interceptor: impl FnMut(Request<()>)-> Result<Request<()>, tonic::Status>) -> $service<
+            InterceptedService<
+                Channel,
+                impl FnMut(Request<()>) -> Result<Request<()>, tonic::Status>,
+            >,
+        > {
+                let channel = self.channel.clone();
+                let metadata = self.metadata.clone();
+                $service::with_interceptor(channel, move |mut req: Request<()>| {
+                    metadata
+                    .iter()
+                    .map(|x| match x {
+                        tonic::metadata::KeyAndValueRef::Ascii(k, v) => {
+                            req.metadata_mut().insert(k, v.clone());
+                        }
+                        tonic::metadata::KeyAndValueRef::Binary(k, v) => {
+                            req.metadata_mut().insert_bin(k, v.clone());
+                        }
+                    })
+                    .count();
+                    interceptor(req)
+                })
+            }
         }
     };
 }
