@@ -1,4 +1,4 @@
-use std::env;
+use std::{env, time::Duration};
 
 use invest_api_rust_sdk::{ServiceFactory, SANDBOX_ENDPOINT};
 use tonic::Request;
@@ -18,6 +18,8 @@ async fn main() {
 }
 
 fn interceptor(req: Request<()>) -> Result<Request<()>, tonic::Status> {
+	let mut req = req;
+	req.set_timeout(Duration::from_millis(300));
 	println!("request metadata: {:#?}", req.metadata());
 	Ok(req)
 }
