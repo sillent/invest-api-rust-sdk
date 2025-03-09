@@ -8,6 +8,9 @@ keywords = ["api", "invest"]
 readme = "README.md"
 homepage = "https://github.com/sillent/invest-api-rust-sdk"
 authors = ["Dmitry Ulyanov <sillent1987@gmail.com>"]
+exclude = [
+  "examples/*",
+]
 
 
 [dependencies]
