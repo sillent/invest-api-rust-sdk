@@ -2,6 +2,13 @@
 name = "invest-api-rust-sdk"
 version = "0.1.0"
 edition = "2021"
+description = "Invest API SDK is a Rust library that provides a convenient wrapper for gRPC-based interaction with Invest API. It supports interceptor configuration for each service separately and utilizes Tonic for client generation"
+license-file = "LICENSE.txt"
+keywords = ["api", "invest"]
+readme = "README.md"
+homepage = "https://github.com/sillent/invest-api-rust-sdk"
+authors = ["Dmitry Ulyanov <sillent1987@gmail.com>"]
+
 
 [dependencies]
 paste = "1.0.15"
