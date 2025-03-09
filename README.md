@@ -1,7 +1,7 @@
 # Invest API SDK (Rust)
 Invest API SDK is a Rust library that provides a convenient wrapper for interacting with [Invest API](https://russianinvestments.github.io/investAPI/)
 
-The SDK uses Tonic to generate gRPC clients and allows configuring interceptors for each service separately.
+The SDK uses [Tonic](https://github.com/hyperium/tonic) to generate gRPC clients and allows configuring interceptors for each service separately.
 
 ## Features
 
@@ -29,7 +29,9 @@ Before running, set the TOKEN environment variable with your API access token (e
 
 # Invest API SDK (Rust)
 
-Invest API SDK — это библиотека на языке Rust, предоставляющая удобную оболочку для взаимодействия с [Invest API](https://russianinvestments.github.io/investAPI/) через gRPC. SDK использует [Tonic](https://github.com/hyperium/tonic) для генерации gRPC-клиентов и предоставляет возможность конфигурировать interceptor'ы для каждого сервиса отдельно.
+Invest API SDK — это библиотека на языке Rust, предоставляющая удобную оболочку для взаимодействия с [Invest API](https://russianinvestments.github.io/investAPI/) через gRPC.
+
+SDK использует [Tonic](https://github.com/hyperium/tonic) для генерации gRPC-клиентов и предоставляет возможность конфигурировать interceptor'ы для каждого сервиса отдельно.
 
 ## Возможности
 
