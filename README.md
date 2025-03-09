@@ -26,6 +26,9 @@ You can find usage examples in the examples directory.
 
 Before running, set the TOKEN environment variable with your API access token (examples use SANDBOX).
 
+## Important Notice
+
+Use this crate at your own risk. The author assumes no responsibility for any issues arising from its usage.
 
 # Invest API SDK (Rust)
 
@@ -56,4 +59,6 @@ invest-api-rust-sdk = "0.1"
 Перед запуском необходимо установить переменную окружения `TOKEN` в которой будет указан токен-доступа к API endpoint (в примерах используется SANDBOX)
 
 
+## Важное уведомление
 
+Используйте данный `crate` на свой страх и риск. Автор не несет никакой ответственности за использование данного `crate`
