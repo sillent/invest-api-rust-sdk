@@ -8,6 +8,7 @@ use contracts::operations_stream_service_client::OperationsStreamServiceClient;
 use contracts::orders_service_client::OrdersServiceClient;
 use contracts::orders_stream_service_client::OrdersStreamServiceClient;
 use contracts::sandbox_service_client::SandboxServiceClient;
+use contracts::signal_service_client::SignalServiceClient;
 use contracts::stop_orders_service_client::StopOrdersServiceClient;
 use contracts::users_service_client::UsersServiceClient;
 pub use prelude::contracts;
@@ -180,6 +181,7 @@ impl ServiceFactory {
     service_gen!(marketdata_service:MarketDataServiceClient);
     service_gen!(marketdata_stream_service:MarketDataStreamServiceClient);
     service_gen!(sandbox_service:SandboxServiceClient);
+    service_gen!(signal_service:SignalServiceClient);
 }
 
 #[macro_export]
