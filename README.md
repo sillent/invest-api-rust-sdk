@@ -16,7 +16,7 @@ Add the following to your Cargo.toml:
 
 ```toml
 [dependencies]
-invest-api-rust-sdk = "0.1"
+invest-api-rust-sdk = "0.2"
 
 ```
 
@@ -49,7 +49,7 @@ SDK использует [Tonic](https://github.com/hyperium/tonic) для ге�
 
 ```toml
 [dependencies]
-invest-api-rust-sdk = "0.1"
+invest-api-rust-sdk = "0.2"
 ```
 
 ## Использование
