@@ -12,6 +12,6 @@ async fn main() {
 		.build()
 		.unwrap();
 	let mut user_svc = factory.users_service();
-	let account_resp = user_svc.get_accounts(invest_api_rust_sdk::contracts::GetAccountsRequest{}).await;
+	let account_resp = user_svc.get_accounts(invest_api_rust_sdk::contracts::GetAccountsRequest{status: None }).await;
 	println!("{account_resp:#?}");
 }
