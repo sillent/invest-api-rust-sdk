@@ -160,6 +160,7 @@ impl ServiceFactoryBuilder {
 }
 
 /// Factory that create gRPC client services from .proto specs of [invest API](https://russianinvestments.github.io/investAPI/)
+#[derive(Clone)]
 pub struct ServiceFactory {
     metadata: MetadataMap,
     channel: Channel,
@@ -203,10 +204,10 @@ macro_rules! service_gen {
                     .iter()
                     .map(|x| match x {
                         tonic::metadata::KeyAndValueRef::Ascii(k, v) => {
-                            req.metadata_mut().insert(k, v.clone());
+                            req.metadata_mut().insert(k, v.into());
                         }
                         tonic::metadata::KeyAndValueRef::Binary(k, v) => {
-                            req.metadata_mut().insert_bin(k, v.clone());
+                            req.metadata_mut().insert_bin(k, v.into());
                         }
                     })
                     .count();
@@ -229,10 +230,10 @@ macro_rules! service_gen {
                     .iter()
                     .map(|x| match x {
                         tonic::metadata::KeyAndValueRef::Ascii(k, v) => {
-                            req.metadata_mut().insert(k, v.clone());
+                            req.metadata_mut().insert(k, v.into());
                         }
                         tonic::metadata::KeyAndValueRef::Binary(k, v) => {
-                            req.metadata_mut().insert_bin(k, v.clone());
+                            req.metadata_mut().insert_bin(k, v.into());
                         }
                     })
                     .count();

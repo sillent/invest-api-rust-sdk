@@ -8,7 +8,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     tonic_build::configure()
         .build_client(true)
-        .build_server(true)
+        .build_server(false)
         .compile_protos(file_slice, &[PROTO_DIR])?;
 
     Ok(())
