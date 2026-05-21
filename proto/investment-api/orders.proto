@@ -14,9 +14,9 @@ import "google/protobuf/timestamp.proto";
 import "google/api/field_behavior.proto";
 
 service OrdersStreamService {
-  //Stream сделок пользователя.
+  //TradesStream — стрим сделок пользователя
   rpc TradesStream(TradesStreamRequest) returns (stream TradesStreamResponse);
-  //Stream поручений пользователя.
+  //OrderStateStream — стрим поручений пользователя
   //Перед работой прочитайте [статью](/invest/services/orders/orders_state_stream).
   rpc OrderStateStream(OrderStateStreamRequest) returns (stream OrderStateStreamResponse);
 }
@@ -24,28 +24,29 @@ service OrdersStreamService {
 service OrdersService {/* Сервис предназначен для работы с торговыми поручениями:<br/> **1**.
                         выставление;<br/> **2**. отмена;<br/> **3**. получение статуса;<br/> **4**.
                         расчет полной стоимости;<br/> **5**. получение списка заявок.*/
-  //Метод выставления заявки.
+  //PostOrder — выставить заявку
   rpc PostOrder(PostOrderRequest) returns (PostOrderResponse);
 
-  //Асинхронный метод выставления заявки.
+  //PostOrderAsync — выставить заявку асинхронным методом
+  //Особенности работы приведены в [статье](/invest/services/orders/async).
   rpc PostOrderAsync(PostOrderAsyncRequest) returns (PostOrderAsyncResponse);
 
-  //Метод отмены биржевой заявки.
+  //CancelOrder — отменить заявку
   rpc CancelOrder(CancelOrderRequest) returns (CancelOrderResponse);
 
-  //Метод получения статуса торгового поручения.
+  //GetOrderState — получить статус торгового поручения
   rpc GetOrderState(GetOrderStateRequest) returns (OrderState);
 
-  //Метод получения списка активных заявок по счету.
+  //GetOrders — получить список активных заявок по счету
   rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse);
 
-  //Метод изменения выставленной заявки.
+  //ReplaceOrder — изменить выставленную заявку
   rpc ReplaceOrder(ReplaceOrderRequest) returns (PostOrderResponse);
 
-  //Расчет количества доступных для покупки/продажи лотов.
+  //GetMaxLots — расчет количества доступных для покупки/продажи лотов
   rpc GetMaxLots(GetMaxLotsRequest) returns (GetMaxLotsResponse);
 
-  //Метод получения предварительной стоимости для лимитной заявки.
+  //GetOrderPrice — получить предварительную стоимость для лимитной заявки
   rpc GetOrderPrice(GetOrderPriceRequest) returns (GetOrderPriceResponse);
 }
 
@@ -92,9 +93,10 @@ message PostOrderRequest {
   string account_id = 5 [(google.api.field_behavior) = REQUIRED]; //Номер счета.
   OrderType order_type = 6 [(google.api.field_behavior) = REQUIRED]; //Тип заявки.
   string order_id = 7 [(google.api.field_behavior) = REQUIRED]; //Идентификатор запроса выставления поручения для целей идемпотентности в формате UID. Максимальная длина 36 символов.
-  string instrument_id = 8; //Идентификатор инструмента, принимает значения Figi или Instrument_uid.
+  string instrument_id = 8; //Идентификатор инструмента. Принимает значение `figi`, `instrument_uid` или `ticker + '_' + class_code`.
   TimeInForceType time_in_force = 9; //Алгоритм исполнения поручения, применяется только к лимитной заявке.
   PriceType price_type = 10; //Тип цены.
+  bool confirm_margin_trade = 11; // Согласие на выставление заявки, которая может привести к непокрытой позиции, по умолчанию false.
 }
 
 //Прочитайте  про ключ идемпотентности [здесь](./head-orders/)
@@ -120,13 +122,15 @@ message PostOrderResponse {
   string message = 15; //Дополнительные данные об исполнении заявки.
   Quotation initial_order_price_pt = 16; //Начальная цена заявки в пунктах (для фьючерсов).
   string instrument_uid = 17; //UID идентификатор инструмента.
+  string ticker = 18; //Тикер инструмента.
+  string class_code = 19; //Класс-код (секция торгов).
   string order_request_id = 20; //Идентификатор ключа идемпотентности, переданный клиентом, в формате UID. Максимальная длина 36 символов.
   ResponseMetadata response_metadata = 254; //Метадата
 }
 
 //Запрос выставления асинхронного торгового поручения.
 message PostOrderAsyncRequest {
-  string instrument_id = 1 [(google.api.field_behavior) = REQUIRED]; //Идентификатор инструмента, принимает значения Figi или Instrument_uid.
+  string instrument_id = 1 [(google.api.field_behavior) = REQUIRED]; //Идентификатор инструмента. Принимает значение `figi`, `instrument_uid` или `ticker + '_' + class_code`.
   int64 quantity = 2 [(google.api.field_behavior) = REQUIRED]; //Количество лотов.
   optional Quotation price = 3; //Цена за 1 инструмент. Для получения стоимости лота требуется умножить на лотность инструмента. Игнорируется для рыночных поручений.
   OrderDirection direction = 4 [(google.api.field_behavior) = REQUIRED]; //Направление операции.
@@ -135,6 +139,7 @@ message PostOrderAsyncRequest {
   string order_id = 7 [(google.api.field_behavior) = REQUIRED]; //Идентификатор запроса выставления поручения для целей идемпотентности в формате UID. Максимальная длина 36 символов.
   optional TimeInForceType time_in_force = 8; //Алгоритм исполнения поручения, применяется только к лимитной заявке.
   optional PriceType price_type = 9; //Тип цены.
+  bool confirm_margin_trade = 10; // Согласие на выставление заявки, которая может привести к непокрытой позиции, по умолчанию false.
 }
 
 //Результат выставления асинхронного торгового поручения.
@@ -168,6 +173,13 @@ message GetOrderStateRequest {
 //Запрос получения списка активных торговых поручений.
 message GetOrdersRequest {
   string account_id = 1 [(google.api.field_behavior) = REQUIRED]; //Номер счета.
+  optional GetOrdersRequestFilters advanced_filters = 2; //Дополнительные фильтры.
+
+  message GetOrdersRequestFilters {
+    optional google.protobuf.Timestamp from = 1; //Дата и время, начиная с которой нужно получить информацию в часовом поясе UTC. Параметр применим только к ордерам, созданным сегодня.
+    optional google.protobuf.Timestamp to = 2; //Дата и время, до которой нужно получить информацию в часовом поясе UTC. Параметр применим только к ордерам, созданным сегодня.
+    repeated OrderExecutionReportStatus execution_status = 3; //Статусы заявок.
+  }
 }
 
 //Список активных торговых поручений.
@@ -197,6 +209,8 @@ message OrderState {
   google.protobuf.Timestamp order_date = 18; //Дата и время выставления заявки в часовом поясе UTC.
   string instrument_uid = 19; //UID идентификатор инструмента.
   string order_request_id = 20; //Идентификатор ключа идемпотентности, переданный клиентом, в формате UID. Максимальная длина 36 символов.
+  string ticker = 21; //Тикер инструмента.
+  string class_code = 22; //Класс-код (секция торгов).
 }
 
 //Сделки в рамках торгового поручения.
@@ -210,17 +224,19 @@ message OrderStage {
 //Запрос изменения выставленной заявки.
 message ReplaceOrderRequest {
   string account_id = 1 [(google.api.field_behavior) = REQUIRED]; //Номер счета.
+  optional OrderIdType order_id_type = 5; //Тип идентификатора заявки.
   string order_id = 6 [(google.api.field_behavior) = REQUIRED]; //Идентификатор заявки на бирже.
   string idempotency_key = 7 [(google.api.field_behavior) = REQUIRED]; //Новый идентификатор запроса выставления поручения для целей идемпотентности. Максимальная длина 36 символов. Перезатирает старый ключ.
   int64 quantity = 11 [(google.api.field_behavior) = REQUIRED]; //Количество лотов.
   optional Quotation price = 12; //Цена за 1 инструмент.
   optional PriceType price_type = 13; //Тип цены.
+  bool confirm_margin_trade = 14; // Согласие на выставление заявки, которая может привести к непокрытой позиции, по умолчанию false.
 }
 
 //Запрос на расчет количества доступных для покупки/продажи лотов. Если не указывать цену инструмента, то расчет произведется по текущум ценам в стакане: по лучшему предложению для покупки и по лучшему спросу для продажи.
 message GetMaxLotsRequest {
   string account_id = 1 [(google.api.field_behavior) = REQUIRED]; //Номер счета
-  string instrument_id = 2 [(google.api.field_behavior) = REQUIRED]; //Идентификатор инструмента, принимает значения Figi или instrument_uid
+  string instrument_id = 2 [(google.api.field_behavior) = REQUIRED]; //Идентификатор инструмента. Принимает значение `figi`, `instrument_uid` или `ticker + '_' + class_code`.
   optional Quotation price = 3; //Цена инструмента
 }
 
@@ -246,7 +262,7 @@ message GetMaxLotsResponse {
 //Запрос получения предварительной стоимости заявки
 message GetOrderPriceRequest {
   string account_id = 1; //Номер счета
-  string instrument_id = 2; //Идентификатор инструмента, принимает значения Figi или instrument_uid
+  string instrument_id = 2; //Идентификатор инструмента. Принимает значение `figi`, `instrument_uid` или `ticker + '_' + class_code`.
   Quotation price = 3; //Цена инструмента
   OrderDirection direction = 12; //Направление заявки
   int64 quantity = 13; //Количество лотов
@@ -315,6 +331,7 @@ message OrderStateStreamResponse {
     TimeInForceType time_in_force = 11; //Алгоритм исполнения поручения.
     OrderType order_type = 12; //Тип заявки.
     string account_id = 13; //Номер счета.
+    string trade_order_id = 14 [(google.api.field_behavior) = REQUIRED]; //Идентификатор торгового поручения.
     MoneyValue initial_order_price = 22; //Начальная цена заявки.
     MoneyValue order_price = 23; //Цена выставления заявки.
     optional MoneyValue amount = 24; //Предрассчитанная стоимость полной заявки.
