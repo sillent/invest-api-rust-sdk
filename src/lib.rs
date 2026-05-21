@@ -19,12 +19,13 @@ use tonic::transport::{Channel, ClientTlsConfig, Endpoint};
 use tonic::Request;
 
 /// [Production endpoint](https://russianinvestments.github.io/investAPI/)
-pub const PROD_ENDPOINT: &'static str = "https://invest-public-api.tinkoff.ru:443";
+pub const PROD_ENDPOINT: &str = "https://invest-public-api.tinkoff.ru:443";
 /// [Sandbox endpoint](https://russianinvestments.github.io/investAPI/)
-pub const SANDBOX_ENDPOINT: &'static str = "https://sandbox-invest-public-api.tinkoff.ru:443";
-const DEFAULT_USER_AGENT: &'static str = "sillent/invest-api-rust-sdk";
+pub const SANDBOX_ENDPOINT: &str = "https://sandbox-invest-public-api.tinkoff.ru:443";
+const DEFAULT_USER_AGENT: &str = "sillent/invest-api-rust-sdk";
 
 /// [ServiceFactory] builder that aggregate parameters for future gRPC-channel and gRPC-metadata
+#[derive(Default, Debug)]
 pub struct ServiceFactoryBuilder {
     base_url: Option<String>,
     token: Option<String>,
@@ -39,16 +40,7 @@ pub struct ServiceFactoryBuilder {
 impl ServiceFactoryBuilder {
     /// Create empty [ServiceFactoryBuilder]
     pub fn new() -> Self {
-        Self {
-            base_url: None,
-            token: None,
-            user_agent: None,
-            headers: vec![],
-            rate_limit: None,
-            timeout: None,
-            connect_timeout: None,
-            tcp_keepalive: None,
-        }
+        Self::default()
     }
 
     /// Set a base URL if needed to change endpoint address
