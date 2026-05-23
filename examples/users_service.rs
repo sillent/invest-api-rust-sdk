@@ -2,8 +2,8 @@ use std::env;
 
 use invest_api_rust_sdk::{
     contracts::{
-        users_service_client::UsersServiceClient, GetAccountsRequest, GetInfoRequest,
-        GetMarginAttributesRequest, GetUserTariffRequest,
+        users_service_client::UsersServiceClient, GetAccountsRequest, GetBankAccountsRequest,
+        GetInfoRequest, GetMarginAttributesRequest, GetUserTariffRequest,
     },
     ServiceFactory, SANDBOX_ENDPOINT,
 };
@@ -24,6 +24,7 @@ async fn main() {
     account_info(&mut user_svc).await;
     margin_attribute(&mut user_svc, token_account_id).await;
     user_tariff(&mut user_svc).await;
+    bank_account(&mut user_svc).await;
 }
 
 async fn accounts(
@@ -64,5 +65,14 @@ async fn user_tariff(
     >,
 ) {
     let info_resp = user_svc.get_user_tariff(GetUserTariffRequest {}).await;
+    println!("user tariff: {info_resp:#?}");
+}
+
+async fn bank_account(
+    user_svc: &mut UsersServiceClient<
+        InterceptedService<Channel, impl FnMut(Request<()>) -> Result<Request<()>, Status>>,
+    >,
+) {
+    let info_resp = user_svc.get_bank_accounts(GetBankAccountsRequest {}).await;
     println!("user tariff: {info_resp:#?}");
 }
