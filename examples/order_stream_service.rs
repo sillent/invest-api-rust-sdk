@@ -5,7 +5,7 @@ use invest_api_rust_sdk::{contracts::OrderStateStreamRequest, ServiceFactory, SA
 #[tokio::main]
 async fn main() {
     let token_string = env::var("TOKEN").expect("TOKEN environment");
-    let token_account_id = env::var("ACCOUNT_ID").unwrap_or_default();
+    let account_id = env::var("ACCOUNT_ID").unwrap_or_default();
     let factory = ServiceFactory::builder()
         .base_url(SANDBOX_ENDPOINT)
         .token(token_string)
@@ -17,7 +17,7 @@ async fn main() {
 
     let resp = oss
         .order_state_stream(OrderStateStreamRequest {
-            accounts: vec![token_account_id],
+            accounts: vec![account_id],
             ping_delay_millis: Some(100),
         })
         .await;
