@@ -1,6 +1,6 @@
 [package]
 name = "invest-api-rust-sdk"
-version = "0.4.0"
+version = "0.4.1"
 edition = "2021"
 description = "Invest API SDK is a Rust library that provides a convenient wrapper for gRPC-based interaction with Invest API. It supports interceptor configuration for each service separately and utilizes Tonic for client generation"
 license-file = "LICENSE.txt"
@@ -15,7 +15,11 @@ exclude = ["examples/*"]
 paste = "1.0.15"
 prost = "0.14.4"
 prost-types = "0.14.4"
-tonic = { version = "0.14.6", features = ["gzip", "tls-native-roots"] }
+tonic = { version = "0.14.6", features = [
+  "gzip",
+  "tls-ring",
+  "tls-native-roots",
+] }
 tonic-prost = "0.14.6"
 
 [build-dependencies]
