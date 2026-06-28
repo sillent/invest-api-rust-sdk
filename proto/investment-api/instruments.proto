@@ -509,7 +509,7 @@ message Bond {
   RiskLevel risk_level = 63; //Уровень риска.
   BrandData brand = 64; // Информация о бренде.
   BondType bond_type = 65; // Тип облигации.
-  google.protobuf.Timestamp call_date = 69;  // Дата погашения облигации.
+  google.protobuf.Timestamp call_date = 69;  // Дата оферты.
 
   Quotation dlong_client = 90; //Ставка риска в лонг с учетом текущего уровня риска портфеля клиента. [Подробнее про ставки риска](https://www.tbank.ru/invest/help/brokerage/account/margin/about/#q5).
   Quotation dshort_client = 91; //Ставка риска в шорт с учетом текущего уровня риска портфеля клиента. [Подробнее про ставки риска](https://www.tbank.ru/invest/help/brokerage/account/margin/about/#q5).
@@ -1319,6 +1319,13 @@ message IndicativeResponse {
   string uid = 14; // Уникальный идентификатор инструмента.
   bool buy_available_flag = 404; // Признак доступности для покупки.
   bool sell_available_flag = 405; // Признак доступности для продажи.
+  repeated IndexInstrument index_composition = 406; // Состав индекса.
+}
+
+//Инструмент в составе индекса
+message IndexInstrument {
+  string uid = 1; // Идентификатор инструмента.
+  Quotation weight = 2; // Вес инструмента в составе индекса в %.
 }
 
 //Данные о стране.

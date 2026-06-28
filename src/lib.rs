@@ -35,6 +35,7 @@ pub struct ServiceFactoryBuilder {
     timeout: Option<Duration>,
     connect_timeout: Option<Duration>,
     tcp_keepalive: Option<Duration>,
+    tls_config: Option<ClientTlsConfig>,
 }
 
 impl ServiceFactoryBuilder {
@@ -104,6 +105,14 @@ impl ServiceFactoryBuilder {
         }
     }
 
+    /// Set `tonic` TLS configuration for Endpoint
+    pub fn tls_config(self, tls_config: ClientTlsConfig) -> Self {
+        Self {
+            tls_config: Some(tls_config),
+            ..self
+        }
+    }
+
     /// Bulid the [ServiceFactory]
     pub fn build(self) -> Result<ServiceFactory, Box<dyn std::error::Error>> {
         let ServiceFactoryBuilder {
@@ -115,12 +124,17 @@ impl ServiceFactoryBuilder {
             timeout,
             connect_timeout,
             tcp_keepalive,
+            tls_config,
         } = self;
         let base_url = match base_url {
             Some(base_url) => base_url,
-            None => PROD_ENDPOINT.to_owned(),
+            None => ENDPOINT_API.to_owned(),
         };
-        let tls_config = ClientTlsConfig::new().with_native_roots();
+
+        let tls_config = match tls_config {
+            Some(c) => c,
+            None => ClientTlsConfig::new().with_native_roots(),
+        };
         let mut metadata: MetadataMap = MetadataMap::new();
         for header in headers {
             metadata.insert(header.0, header.1.parse()?);
