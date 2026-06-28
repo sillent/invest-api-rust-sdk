@@ -19,9 +19,17 @@ use tonic::transport::{Channel, ClientTlsConfig, Endpoint};
 use tonic::Request;
 
 /// [Production endpoint](https://russianinvestments.github.io/investAPI/)
+#[deprecated]
 pub const PROD_ENDPOINT: &str = "https://invest-public-api.tinkoff.ru:443";
 /// [Sandbox endpoint](https://russianinvestments.github.io/investAPI/)
+#[deprecated]
 pub const SANDBOX_ENDPOINT: &str = "https://sandbox-invest-public-api.tinkoff.ru:443";
+
+/// https://developer.tbank.ru/invest/intro/intro#адреса-сервиса-t-invest-api
+pub const ENDPOINT_API: &str = "https://invest-public-api.tbank.ru:443";
+/// https://developer.tbank.ru/invest/intro/intro#адреса-сервиса-t-invest-api
+pub const SANDBOX_ENDPOINT_API: &str = "https://sandbox-invest-public-api.tbank.ru:443";
+
 const DEFAULT_USER_AGENT: &str = "sillent/invest-api-rust-sdk";
 
 /// [ServiceFactory] builder that aggregate parameters for future gRPC-channel and gRPC-metadata
@@ -35,6 +43,7 @@ pub struct ServiceFactoryBuilder {
     timeout: Option<Duration>,
     connect_timeout: Option<Duration>,
     tcp_keepalive: Option<Duration>,
+    tls_config: Option<ClientTlsConfig>,
 }
 
 impl ServiceFactoryBuilder {
@@ -104,6 +113,14 @@ impl ServiceFactoryBuilder {
         }
     }
 
+    /// Set `tonic` TLS configuration for Endpoint
+    pub fn tls_config(self, tls_config: ClientTlsConfig) -> Self {
+        Self {
+            tls_config: Some(tls_config),
+            ..self
+        }
+    }
+
     /// Bulid the [ServiceFactory]
     pub fn build(self) -> Result<ServiceFactory, Box<dyn std::error::Error>> {
         let ServiceFactoryBuilder {
@@ -115,12 +132,17 @@ impl ServiceFactoryBuilder {
             timeout,
             connect_timeout,
             tcp_keepalive,
+            tls_config,
         } = self;
         let base_url = match base_url {
             Some(base_url) => base_url,
-            None => PROD_ENDPOINT.to_owned(),
+            None => ENDPOINT_API.to_owned(),
         };
-        let tls_config = ClientTlsConfig::new().with_native_roots();
+
+        let tls_config = match tls_config {
+            Some(c) => c,
+            None => ClientTlsConfig::new().with_native_roots(),
+        };
         let mut metadata: MetadataMap = MetadataMap::new();
         for header in headers {
             metadata.insert(header.0, header.1.parse()?);

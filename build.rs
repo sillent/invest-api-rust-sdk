@@ -6,7 +6,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file_refs: Vec<&str> = files.iter().map(String::as_str).collect(); // Создаём ссылки
     let file_slice: &[&str] = &file_refs;
 
-    tonic_build::configure()
+    tonic_prost_build::configure()
         .build_client(true)
         .build_server(false)
         .compile_protos(file_slice, &[PROTO_DIR])?;
