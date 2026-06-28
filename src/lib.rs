@@ -19,17 +19,9 @@ use tonic::transport::{Channel, ClientTlsConfig, Endpoint};
 use tonic::Request;
 
 /// [Production endpoint](https://russianinvestments.github.io/investAPI/)
-#[deprecated]
 pub const PROD_ENDPOINT: &str = "https://invest-public-api.tinkoff.ru:443";
 /// [Sandbox endpoint](https://russianinvestments.github.io/investAPI/)
-#[deprecated]
 pub const SANDBOX_ENDPOINT: &str = "https://sandbox-invest-public-api.tinkoff.ru:443";
-
-/// https://developer.tbank.ru/invest/intro/intro#адреса-сервиса-t-invest-api
-pub const ENDPOINT_API: &str = "https://invest-public-api.tbank.ru:443";
-/// https://developer.tbank.ru/invest/intro/intro#адреса-сервиса-t-invest-api
-pub const SANDBOX_ENDPOINT_API: &str = "https://sandbox-invest-public-api.tbank.ru:443";
-
 const DEFAULT_USER_AGENT: &str = "sillent/invest-api-rust-sdk";
 
 /// [ServiceFactory] builder that aggregate parameters for future gRPC-channel and gRPC-metadata

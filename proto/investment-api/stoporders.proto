@@ -18,7 +18,7 @@ service StopOrdersService { /* Сервис для работы со стоп-з
   //PostStopOrder — выставить стоп-заявку
   rpc PostStopOrder(PostStopOrderRequest) returns (PostStopOrderResponse);
 
-  //GetStopOrders — получить список стоп-заявок по счету
+  //GetStopOrders — получить список активных стоп-заявок по счету
   rpc GetStopOrders(GetStopOrdersRequest) returns (GetStopOrdersResponse);
 
   //CancelStopOrder — отменить стоп-заявку
