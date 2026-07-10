@@ -1,4 +1,5 @@
 use paste::paste;
+pub mod currency;
 pub(crate) mod prelude;
 use contracts::instruments_service_client::InstrumentsServiceClient;
 use contracts::market_data_service_client::MarketDataServiceClient;
