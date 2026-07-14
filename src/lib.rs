@@ -33,6 +33,20 @@ pub const SANDBOX_ENDPOINT_API: &str = "https://sandbox-invest-public-api.tbank.
 
 const DEFAULT_USER_AGENT: &str = "sillent/invest-api-rust-sdk";
 
+/// Environment configuration for T-Invest API endpoints
+///
+/// Select between production and sandbox environments for API access.
+/// Production environment connects to the live trading API, while sandbox
+/// provides a testing environment for development and integration testing.
+pub enum Environment {
+    /// Production environment - connects to live T-Invest API
+    /// Endpoint: https://invest-public-api.tbank.ru:443
+    Production,
+    /// Sandbox environment - connects to testing T-Invest API
+    /// Endpoint: https://sandbox-invest-public-api.tbank.ru:443
+    Sandbox,
+}
+
 /// [ServiceFactory] builder that aggregate parameters for future gRPC-channel and gRPC-metadata
 #[derive(Default, Debug)]
 pub struct ServiceFactoryBuilder {
@@ -57,6 +71,18 @@ impl ServiceFactoryBuilder {
     pub fn base_url<S: Into<String>>(self, base_url: S) -> Self {
         Self {
             base_url: Some(base_url.into()),
+            ..self
+        }
+    }
+
+    /// Set environment (Production or sandbox endpoint)
+    pub fn environment(self, env: Environment) -> Self {
+        let endp = match env {
+            Environment::Production => ENDPOINT_API,
+            Environment::Sandbox => SANDBOX_ENDPOINT_API,
+        };
+        Self {
+            base_url: Some(endp.into()),
             ..self
         }
     }

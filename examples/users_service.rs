@@ -5,7 +5,7 @@ use invest_api_rust_sdk::{
         users_service_client::UsersServiceClient, GetAccountsRequest, GetBankAccountsRequest,
         GetInfoRequest, GetMarginAttributesRequest, GetUserTariffRequest,
     },
-    ServiceFactory, SANDBOX_ENDPOINT,
+    ServiceFactory,
 };
 use tonic::{service::interceptor::InterceptedService, transport::Channel, Request, Status};
 
@@ -14,7 +14,7 @@ async fn main() {
     let token_string = env::var("TOKEN").expect("TOKEN environment");
     let token_account_id = env::var("ACCOUNT_ID").unwrap_or_default();
     let factory = ServiceFactory::builder()
-        .base_url(SANDBOX_ENDPOINT)
+        .environment(invest_api_rust_sdk::Environment::Sandbox)
         .token(token_string)
         .user_agent("in-rust-we-trust")
         .build()

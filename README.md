@@ -1,4 +1,5 @@
 # Invest API SDK (Rust)
+
 Invest API SDK is a Rust library that provides a convenient wrapper for interacting with [Invest API](https://russianinvestments.github.io/investAPI/)
 
 The SDK uses [Tonic](https://github.com/hyperium/tonic) to generate gRPC clients and allows configuring interceptors for each service separately.
@@ -16,7 +17,7 @@ Add the following to your Cargo.toml:
 
 ```toml
 [dependencies]
-invest-api-rust-sdk = "0.2"
+invest-api-rust-sdk = "0.4"
 
 ```
 
@@ -49,7 +50,7 @@ SDK использует [Tonic](https://github.com/hyperium/tonic) для ге�
 
 ```toml
 [dependencies]
-invest-api-rust-sdk = "0.2"
+invest-api-rust-sdk = "0.4"
 ```
 
 ## Использование
@@ -57,7 +58,6 @@ invest-api-rust-sdk = "0.2"
 Примеры использования можно посмотреть в директории `examples`
 
 Перед запуском необходимо установить переменную окружения `TOKEN` в которой будет указан токен-доступа к API endpoint (в примерах используется SANDBOX)
-
 
 ## Важное уведомление
 
